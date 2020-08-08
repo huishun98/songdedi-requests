@@ -43,7 +43,7 @@ def home():
     form = EmailForm()
     if form.validate_on_submit():
         email = form.email.data
-        return redirect('/request:{}'.format(email))
+        return redirect(url_for('request', email = email))
     return render_template("index.html", form=form)
 
 
