@@ -11,7 +11,7 @@
         {% for error in form.email.errors %}
         <p class="red">[{{ error }}]</p>
         {% endfor %}
-        <p class="submit">{{ form.submit() }}</p>
+        <p id="email-request" class="submit">{{ form.submit() }}</p>
     </form>
 </div>
 {% endblock %}
