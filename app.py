@@ -56,12 +56,12 @@ def request(email):
         title, mp3_path = convert(url)
         if not title or not mp3_path:
             msg = "URL Error: Please check URL entered."
-            return render_template("msg.html", msg = msg)
+            return render_template("msg.html", msg = msg, email = email)
         song_details = uploadMp3(email, title, mp3_path)
         try:
             parsed_name = song_details['contentDisposition'].split("inline; filename*=utf-8''")[1]
         except:
-            return redirect(url_for('error', msg = "Unable to get download URL."))
+            return redirect(url_for('message', msg = "Unable to get download URL.", email = email))
         download_url = "https://firebasestorage.googleapis.com/v0/b/{}/o/{}%2F{}?alt=media&token={}".format(
             song_details['bucket'],
             email.replace("@", "%40"),
@@ -69,32 +69,24 @@ def request(email):
             song_details['downloadTokens'])
         song = createFbSong(name = title, url = download_url)
         updateUserPlaylist(song, email)
-        return redirect('/success')
+        return redirect(url_for('message', msg = "Thank you for dedicating! Your song has been added to the playlist.", email = email))
     if checkEmailExist(email):
-        return render_template("request.html", form=form, email=email)
+        return render_template("request.html", form = form, email = email)
     msg = "Error 404: Page could not be found"
-    return render_template("msg.html", msg = msg)
+    return render_template("msg.html", msg = msg, email = None)
 
 
-@app.route('/success', methods = ['GET'])
+@app.route('/message?msg=<msg>&email=<email>', methods = ['GET'])
 @cross_origin()
-def success():
-    title = "Thank you for dedicating!"
-    msg = "Your song has been added to the playlist."
-    return render_template("msg.html", msg = msg, title = title)
-
-
-@app.route('/error', methods = ['GET'])
-@cross_origin()
-def error(msg):
-    return render_template("msg.html", msg = msg)
+def message(msg, email = None):
+    return render_template("msg.html", msg = msg, email = email)
 
 
 @app.errorhandler(404)
 @cross_origin()
 def page_not_found(e):
     msg = "Error 404: Page could not be found"
-    return render_template("msg.html", msg = msg)
+    return render_template("msg.html", msg = msg, email = None)
 
 
 def convert(url):

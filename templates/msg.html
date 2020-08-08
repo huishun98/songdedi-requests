@@ -4,5 +4,13 @@
     <p>{{ title }}</p>
     <p>{{ msg }}</p>
 </div>
-<input class="btn" type="button" value="Return" onclick="history.back(-1)" />
+{% if email is none %}
+<a href="{{ url_for('home') }}">
+    Return to home
+</a>
+{% else %}
+<a href="{{ url_for('request', email = email) }}">
+    Return to host's page
+</a>
+{%endif %}
 {% endblock %}
