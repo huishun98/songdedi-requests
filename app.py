@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, redirect, url_for, render_template, flash, jsonify
+from flask import Flask, redirect, url_for, render_template, flash, jsonify, abort
 from flask_cors import cross_origin
 import requests
 from pytube import YouTube
@@ -38,17 +38,17 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 @app.route('/', methods = ['GET', 'POST'])
-@cross_origin()
 def home():
     form = EmailForm()
     if form.validate_on_submit():
         email = form.email.data
-        return redirect(url_for('request', email = email))
+        if checkEmailExist(email):
+            return redirect(url_for('request', email = email))
+        abort(404)
     return render_template("index.html", form=form)
 
 
 @app.route('/request:<email>', methods = ['GET', 'POST'])
-@cross_origin()
 def request(email):
     form = RequestForm()
     if form.validate_on_submit():
@@ -72,18 +72,15 @@ def request(email):
         return redirect(url_for('message', msg = "Thank you for dedicating! Your song has been added to the playlist.", email = email))
     if checkEmailExist(email):
         return render_template("request.html", form = form, email = email)
-    msg = "Error 404: Page could not be found"
-    return render_template("msg.html", msg = msg, email = None)
+    abort(404)
 
 
 @app.route('/message?msg=<msg>&email=<email>', methods = ['GET'])
-@cross_origin()
 def message(msg, email = None):
     return render_template("msg.html", msg = msg, email = email)
 
 
 @app.errorhandler(404)
-@cross_origin()
 def page_not_found(e):
     msg = "Error 404: Page could not be found"
     return render_template("msg.html", msg = msg, email = None)
@@ -112,10 +109,7 @@ def convert(url):
 def checkEmailExist(email):
     doc_ref = db.collection(Settings.FB_COLLECTION).document(email)
     doc = doc_ref.get()
-    if doc.exists:
-        return True
-    else:
-        return False
+    return doc.exists
 
 
 def uploadMp3(email, title, mp3_path):
