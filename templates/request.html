@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="center">
+    <h1>Welcome!</h1>
+    <form action="/request:{{ email }}" method="post" novalidate>
+        {{ form.csrf_token }}
+        <p>You may dedicate songs to {{ email }} here.</p>
+        <p>Enter <b>URL of Youtube video</b> and click Submit.</p>
+        <p>
+            {{ form.url(size=32, placeholder="https://www.youtube.com/watch?v=kT3Swso1is0") }}
+
+            {% for error in form.url.errors %}
+            <p class="red">[{{ error }}]</p>
+            {% endfor %}
+        </p>
+        <p class="submit">{{ form.submit() }}</p>
+    </form>
+</div>
+{% endblock %}

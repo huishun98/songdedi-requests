@@ -1,0 +1,158 @@
+import flask
+from flask import Flask, redirect, url_for, render_template, flash, jsonify
+from flask_cors import cross_origin
+import requests
+from pytube import YouTube
+from pytube import Playlist
+import os
+import moviepy.editor as mp
+import re
+import pyrebase
+from time import time
+import json
+from dotenv import load_dotenv
+
+from forms import RequestForm, EmailForm
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+load_dotenv()
+
+from config import Config, Settings
+
+app = Flask(__name__)
+app.config.from_object(Config)
+
+# FIREBASE
+firebase = pyrebase.initialize_app(Settings.FIREBASE_CONFIG)
+storage = firebase.storage()
+
+with open(Settings.CRED_FILE, 'w') as outfile:
+    json.dump(Settings.FIREBASE_CERT, outfile)
+
+cred = credentials.Certificate(Settings.CRED_FILE)
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
+@app.route('/', methods = ['GET', 'POST'])
+@cross_origin()
+def home():
+    form = EmailForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        return redirect('/request:{}'.format(email))
+    return render_template("index.html", form=form)
+
+
+@app.route('/request:<email>', methods = ['GET', 'POST'])
+@cross_origin()
+def request(email):
+    form = RequestForm()
+    if form.validate_on_submit():
+        url = form.url.data
+        title, mp3_path = convert(url)
+        if not title or not mp3_path:
+            msg = "URL Error: Please check URL entered."
+            return render_template("msg.html", msg = msg)
+        song_details = uploadMp3(email, title, mp3_path)
+        try:
+            parsed_name = song_details['contentDisposition'].split("inline; filename*=utf-8''")[1]
+        except:
+            return redirect(url_for('error', msg = "Unable to get download URL."))
+        download_url = "https://firebasestorage.googleapis.com/v0/b/{}/o/{}%2F{}?alt=media&token={}".format(
+            song_details['bucket'],
+            email.replace("@", "%40"),
+            parsed_name,
+            song_details['downloadTokens'])
+        song = createFbSong(name = title, url = download_url)
+        updateUserPlaylist(song, email)
+        return redirect('/success')
+    if checkEmailExist(email):
+        return render_template("request.html", form=form, email=email)
+    msg = "Error 404: Page could not be found"
+    return render_template("msg.html", msg = msg)
+
+
+@app.route('/success', methods = ['GET'])
+@cross_origin()
+def success():
+    title = "Thank you for dedicating!"
+    msg = "Your song has been added to the playlist."
+    return render_template("msg.html", msg = msg, title = title)
+
+
+@app.route('/error', methods = ['GET'])
+@cross_origin()
+def error(msg):
+    return render_template("msg.html", msg = msg)
+
+
+@app.errorhandler(404)
+@cross_origin()
+def page_not_found(e):
+    msg = "Error 404: Page could not be found"
+    return render_template("msg.html", msg = msg)
+
+
+def convert(url):
+    print(url)
+    folder = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR)
+
+    try:
+        YouTube(url).streams.first().download(folder)
+    except:
+        return None, None
+
+    for filename in os.listdir(folder):
+        if re.search('mp4', filename):
+            mp4_path = os.path.join(folder,filename)
+            title = os.path.splitext(filename)[0]+'.mp3'
+            mp3_path = os.path.join(folder, title)
+            new_file = mp.AudioFileClip(mp4_path)
+            new_file.write_audiofile(mp3_path)
+            os.remove(mp4_path)
+            return title, mp3_path
+
+
+def checkEmailExist(email):
+    doc_ref = db.collection(Settings.FB_COLLECTION).document(email)
+    doc = doc_ref.get()
+    if doc.exists:
+        return True
+    else:
+        return False
+
+
+def uploadMp3(email, title, mp3_path):
+    path_on_cloud = "{}/{}".format(email, title)
+    return storage.child(path_on_cloud).put(mp3_path)
+
+
+def updateUserPlaylist(song, email):
+    doc_ref = db.collection(Settings.FB_COLLECTION).document(email)
+    doc = doc_ref.get()
+    if doc.exists:
+        playlist = doc.to_dict().get(Settings.FB_PLAYLIST_FIELD)
+        playlist.append(song)
+        doc_ref.update({
+            Settings.FB_PLAYLIST_FIELD: playlist,
+            Settings.FB_TIMESTAMP_FIELD: int(time()*1000)
+        })
+    else:
+        print(u'No such document!')
+
+
+def createFbSong(url, name = "Unknown", cover = "https://github.com/u3u.png", artist = "Unknown"):
+    return {
+        "name": name,
+        "cover": cover,
+        "artist": artist,
+        "url": url
+    }
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

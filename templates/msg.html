@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap center">
+    <p>{{ title }}</p>
+    <p>{{ msg }}</p>
+</div>
+<input class="btn" type="button" value="Return" onclick="history.back(-1)" />
+{% endblock %}

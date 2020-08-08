@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="center">
+    <h1>SongDedi</h1>
+    <form action="/" method="post" novalidate>
+        {{ form.csrf_token }}
+        <p>This is a song dedication service. Enter host's email and we will take you to where you belong.</p>
+        <p>
+            {{ form.email(size=32, placeholder="abc123@gmail.com") }}
+        </p>
+        {% for error in form.email.errors %}
+        <p class="red">[{{ error }}]</p>
+        {% endfor %}
+        <p class="submit">{{ form.submit() }}</p>
+    </form>
+</div>
+{% endblock %}
