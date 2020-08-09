@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% if msg is not none %}
+<p>{{ msg }}</p>
+{%endif %}
+
+<div class="full-width">
+    Now playing:
+    <p>{{ data.playlist[data.currentMusic].name }} ({{data.currentMusic + 1}}/{{data.playlist | length}})
+    </p>
+</div>
+
+<div class="scroll-wrapper">
+    {% for item in data.playlist %}
+    {% if data.currentMusic == loop.index - 1 %}
+    <div class="item active">
+        {{ loop.index }} || {{ item.name }}
+    </div>
+    {% else %}
+    <div class="item">
+        {{ loop.index }} || {{ item.name }}
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<a href="{{ url_for('request', email = email) }}">
+    Return to host's page
+</a>
+{% endblock %}

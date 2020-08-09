@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="center">
-    <img src="{{url_for('static', filename='sound.png')}}" class="image-250"/>
+    <img src="{{url_for('static', filename='sound.png')}}" class="image-250" />
     <h1>Welcome!</h1>
     <form action="/request:{{ email }}" method="post" novalidate>
         {{ form.csrf_token }}
@@ -11,10 +11,11 @@
             {{ form.url(size=32, placeholder="https://www.youtube.com/watch?v=kT3Swso1is0") }}
 
             {% for error in form.url.errors %}
-            <p class="red">[{{ error }}]</p>
-            {% endfor %}
+        <p class="red">[{{ error }}]</p>
+        {% endfor %}
         </p>
         <p id="song-request" class="submit">{{ form.submit() }}</p>
     </form>
+    <p>View host's playlist <a href="{{url_for('playlist', email=email )}}">here</a></p>
 </div>
 {% endblock %}

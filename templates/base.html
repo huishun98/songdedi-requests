@@ -25,7 +25,33 @@
 
 <style>
     :root {
-        --color-one: #734F96
+        --color-one: #734F96;
+
+        --color-light: #d6d6d6
+    }
+
+    /* items */
+
+    .scroll-wrapper {
+        max-height: 250px;
+        overflow-y: auto;
+        border-top: 1px solid var(--color-light);
+        border-bottom: 1px solid var(--color-light);
+        margin: 20px 0;
+    }
+
+    .item {
+        width: 100%;
+        overflow-wrap: break-word;
+        padding: 10px;
+    }
+
+    .item+.item {
+        border-top: 1px solid var(--color-light);
+    }
+
+    .item.active {
+        background-color: var(--color-light);
     }
 
     /* loader */
@@ -49,7 +75,7 @@
     }
 
     .loader {
-        border: 8px solid #d6d6d6;
+        border: 8px solid var(--color-light);
         /* Light grey */
         border-top: 8px solid var(--color-one);
         /* Blue */
@@ -77,6 +103,10 @@
     }
 
     /* components */
+
+    .full-width {
+        width: 100%;
+    }
 
     .submit input,
     .btn {

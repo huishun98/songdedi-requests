@@ -69,7 +69,7 @@ def request(email):
             song_details['downloadTokens'])
         song = createFbSong(name = title, url = download_url)
         updateUserPlaylist(song, email)
-        return redirect(url_for('message', msg = "Thank you for dedicating! Your song has been added to the playlist.", email = email))
+        return redirect(url_for('playlist', email = email, msg = "Thank you for dedicating! Your song has been added to the playlist."))
     if checkEmailExist(email):
         return render_template("request.html", form = form, email = email)
     abort(404)
@@ -78,6 +78,13 @@ def request(email):
 @app.route('/message?msg=<msg>&email=<email>', methods = ['GET'])
 def message(msg, email = None):
     return render_template("msg.html", msg = msg, email = email)
+
+@app.route('/playlist?email=<email>', methods = ['GET'])
+@app.route('/playlist?email=<email>&msg=<msg>', methods = ['GET'])
+def playlist(email, msg = None):
+    doc_ref = db.collection(Settings.FB_COLLECTION).document(email)
+    data = doc_ref.get().to_dict()
+    return render_template("playlist.html", email = email, msg = msg, data = data)
 
 
 @app.errorhandler(404)
@@ -104,7 +111,7 @@ def convert(url):
             new_file = mp.AudioFileClip(mp4_path)
             new_file.write_audiofile(mp3_path)
             os.remove(mp4_path)
-            return title, mp3_path
+            return os.path.splitext(filename)[0], mp3_path
 
 
 def checkEmailExist(email):
