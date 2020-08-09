@@ -2,9 +2,11 @@
 {% block content %}
 <div class="center">
     <h1>SongDedi</h1>
+    <img src="{{url_for('static', filename='lavendar.jpg')}}" class="image-250"/>
     <form action="/" method="post" novalidate>
         {{ form.csrf_token }}
-        <p>This is a song dedication service. Enter host's email and we will take you to where you belong.</p>
+        <p>This is a song dedication service. </p>
+        <p>Enter <b>host's email</b> and we will take you to where you belong.</p>
         <p>
             {{ form.email(size=32, placeholder="abc123@gmail.com") }}
         </p>

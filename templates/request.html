@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="center">
+    <img src="{{url_for('static', filename='sound.png')}}" class="image-250"/>
     <h1>Welcome!</h1>
     <form action="/request:{{ email }}" method="post" novalidate>
         {{ form.csrf_token }}
