@@ -1,3 +1,4 @@
+browser-cookie3==0.11.1
 CacheControl==0.12.6
 cachetools==4.1.1
 certifi==2020.6.20
@@ -26,17 +27,22 @@ httplib2==0.18.1
 idna==2.10
 imageio==2.9.0
 imageio-ffmpeg==0.4.2
+importlib-metadata==1.7.0
 itsdangerous==1.1.0
 Jinja2==2.11.2
 jws==0.1.3
+keyring==21.3.0
+lz4==3.1.0
 MarkupSafe==1.1.1
 moviepy==1.0.3
 msgpack==1.0.0
 numpy==1.19.1
 oauth2client==3.0.0
+pbkdf2==1.3
 Pillow==7.2.0
 proglog==0.1.9
 protobuf==4.0.0rc2
+pyaes==1.6.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
@@ -44,7 +50,7 @@ pycryptodome==3.4.3
 Pyrebase==3.0.27
 python-dotenv==0.14.0
 python-jwt==2.0.1
-pytube3 @ git+https://gitlab.com/obuilds/public/pytube@10c57109f87fe864d8f38bbc8d76941e695de93a
+pytube3 @ git+https://github.com/huishun98/pytube@f1b71b117f109200e9adc852868e7efd7e27c21a
 pytz==2020.1
 requests==2.24.0
 requests-toolbelt==0.7.0
@@ -56,3 +62,4 @@ uritemplate==3.0.1
 urllib3==1.25.10
 Werkzeug==1.0.1
 WTForms==2.3.3
+zipp==3.1.0
