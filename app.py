@@ -1,6 +1,7 @@
 import flask
 from flask import Flask, redirect, url_for, render_template, flash, jsonify, abort
 from flask_cors import cross_origin
+import urllib.parse
 import requests
 from pytube import YouTube
 from pytube import Playlist
@@ -57,14 +58,13 @@ def request(email):
         if not title and not mp3_path:
             msg = "URL Error: Please check URL entered."
             return render_template("msg.html", msg = msg, email = email)
-        song_details = uploadMp3(email, title, mp3_path)
+        song_details = uploadMp3(email, title, mp3_path)        
         try:
-            parsed_name = song_details['contentDisposition'].split("inline; filename*=utf-8''")[1]
+            parsed_name = urllib.parse.quote_plus(song_details.get('name'))
         except:
             return redirect(url_for('message', msg = "Unable to get download URL.", email = email))
-        download_url = "https://firebasestorage.googleapis.com/v0/b/{}/o/{}%2F{}?alt=media&token={}".format(
+        download_url = "https://firebasestorage.googleapis.com/v0/b/{}/o/{}?alt=media&token={}".format(
             song_details['bucket'],
-            email.replace("@", "%40"),
             parsed_name,
             song_details['downloadTokens'])
         os.remove(mp3_path)
