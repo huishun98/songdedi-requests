@@ -91,9 +91,9 @@ def convert(url):
     folder = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR)
 
     try:
-        x = YouTube(url).streams.first().download(folder)
-        print(x)
-    except:
+        YouTube(url).streams.first().download(folder)
+    except Exception as e:
+        print(e)
         return None, None
 
     for filename in os.listdir(folder):
