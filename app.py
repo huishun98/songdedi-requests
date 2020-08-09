@@ -54,7 +54,7 @@ def request(email):
     if form.validate_on_submit():
         url = form.url.data
         title, mp3_path = convert(url)
-        if not title or not mp3_path:
+        if not title and not mp3_path:
             msg = "URL Error: Please check URL entered."
             return render_template("msg.html", msg = msg, email = email)
         song_details = uploadMp3(email, title, mp3_path)
@@ -91,7 +91,8 @@ def convert(url):
     folder = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR)
 
     try:
-        YouTube(url).streams.first().download(folder)
+        x = YouTube(url).streams.first().download(folder)
+        print(x)
     except:
         return None, None
 
