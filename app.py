@@ -67,6 +67,7 @@ def request(email):
             email.replace("@", "%40"),
             parsed_name,
             song_details['downloadTokens'])
+        os.remove(mp3_path)
         song = createFbSong(name = title, url = download_url)
         updateUserPlaylist(song, email)
         return redirect(url_for('playlist', email = email, msg = "Thank you for dedicating! Your song has been added to the playlist."))
