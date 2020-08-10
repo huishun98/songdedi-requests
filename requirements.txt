@@ -50,7 +50,7 @@ pycryptodome==3.4.3
 Pyrebase==3.0.27
 python-dotenv==0.14.0
 python-jwt==2.0.1
-pytube3 @ git+https://github.com/huishun98/pytube@f1b71b117f109200e9adc852868e7efd7e27c21a
+pytube3 @ git+https://github.com/huishun98/pytube
 pytz==2020.1
 requests==2.24.0
 requests-toolbelt==0.7.0
