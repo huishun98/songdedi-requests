@@ -35,3 +35,4 @@ class Settings(object):
     FB_PLAYLIST_FIELD = "playlist"
     FB_TIMESTAMP_FIELD = "timestamp"
     PROJECT_ID = "playlist-1596698015099"
+    COOKIE = os.getenv('COOKIE')

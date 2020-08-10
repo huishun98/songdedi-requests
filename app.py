@@ -3,8 +3,7 @@ from flask import Flask, redirect, url_for, render_template, flash, jsonify, abo
 from flask_cors import cross_origin
 import urllib.parse
 import requests
-from pytube import YouTube
-from pytube import Playlist
+from YouPy import YouTubeItem
 import os
 import moviepy.editor as mp
 import re
@@ -99,7 +98,7 @@ def convert(url):
     folder = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR)
 
     try:
-        YouTube(url).streams.first().download(folder)
+        YouTubeItem(url, request_headers = {'cookie': Settings.COOKIE}).streams.first().download(folder)
     except Exception as e:
         print(e)
         return None, None

@@ -26,6 +26,7 @@ Song dedication admin panel live site: https://songdedi-admin.herokuapp.com/
 - auth_provider_x509_cert_url
 - client_x509_cert_url
 - SECRET_KEY (can be anything)
+- COOKIE (for Youtube)
 
 2. Download the required libraries
 `pip install -r requirements.txt`
