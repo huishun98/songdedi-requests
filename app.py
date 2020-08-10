@@ -84,6 +84,8 @@ def message(msg, email = None):
 def playlist(email, msg = None):
     doc_ref = db.collection(Settings.FB_COLLECTION).document(email)
     data = doc_ref.get().to_dict()
+    if len(data['playlist']) <= 0:
+        return render_template("msg.html", msg = "Playlist is empty", email = email)
     return render_template("playlist.html", email = email, msg = msg, data = data)
 
 
