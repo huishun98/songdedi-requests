@@ -3,19 +3,36 @@
 <div class="center">
     <img src="{{url_for('static', filename='sound.png')}}" class="image-250" />
     <h1>Welcome!</h1>
-    <form action="/request:{{ email }}" method="post" novalidate>
+    <p>You may dedicate songs to {{ email }} here.</p>
+
+    <form class="upload-yt display form" action="/request:{{ email }}" method="post" novalidate>
         {{ form.csrf_token }}
-        <p>You may dedicate songs to {{ email }} here.</p>
         <p>Enter <b>URL of Youtube video</b> and click Submit.</p>
         <p>
             {{ form.url(size=32, placeholder="https://www.youtube.com/watch?v=kT3Swso1is0") }}
+        </p>
 
-            {% for error in form.url.errors %}
+        {% for error in form.url.errors %}
         <p class="red">[{{ error }}]</p>
         {% endfor %}
-        </p>
+
         <p id="song-request" class="submit">{{ form.submit() }}</p>
     </form>
-    <p>View host's playlist <a href="{{url_for('playlist', email=email )}}">here</a></p>
+
+    <form class="upload-mp3 form" action="/uploader:{{ email }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <input id="mp3-input" class="margin-bot" type="file" name="file" accept=".mp3" required />
+        <input id="mp3-request" type="submit" class="submit" />
+    </form>
+
+    <p>
+        <span class="upload-yt display">
+            Alternatively, <span class="link" id="upload-mp3-link">upload mp3</span>.
+        </span>
+        <span class="upload-mp3">
+            Alternatively, <span class="link" id="upload-yt-link">upload from YouTube</span>.
+        </span><br>
+        <span>View host's playlist <a href="{{url_for('playlist', email=email )}}">here</a>.</span>
+    </p>
 </div>
 {% endblock %}

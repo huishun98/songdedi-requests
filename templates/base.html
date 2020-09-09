@@ -26,8 +26,13 @@
 <style>
     :root {
         --color-one: #734F96;
-
+        --color-link: #007bff;
+        --color-link-dark: #0058b6;
         --color-light: #d6d6d6
+    }
+
+    .margin-bot {
+        margin-bottom: 10px;
     }
 
     /* items */
@@ -116,6 +121,7 @@
     }
 
     .submit input,
+    input.submit,
     .btn {
         display: inline-block;
         text-align: center;
@@ -129,6 +135,7 @@
     }
 
     .submit input:hover,
+    input.submit:hover,
     .btn:hover {
         color: white;
         opacity: 0.6;
@@ -171,6 +178,37 @@
         padding: 20px 0;
     }
 
+    .link,
+    a {
+        color: var(--color-link);
+        text-decoration: none;
+        background-color: transparent;
+    }
+
+    .link:hover,
+    a:hover {
+        cursor: pointer;
+        text-decoration: underline;
+        color: var(--color-link-dark);
+    }
+
+    /* youtube and mp3 forms */
+
+    .upload-mp3,
+    .upload-yt {
+        display: none;
+    }
+
+    .upload-mp3.display,
+    .upload-yt.display {
+        display: inline-block;
+    }
+
+    /* form */
+
+    .form.display {
+        padding: 20px 0;
+    }
 
     @media (min-width: 992px) {
         .flex-center-inner {
@@ -184,14 +222,35 @@
     const _document = document
     document.addEventListener('click', function (event) {
 
-        // If the clicked element doesn't have the right selector, bail
-        if (!event.target.matches('#song-request input') && !event.target.matches('#email-request input')) {
-            return
+        if (event.target.matches('#upload-mp3-link')) {
+            const mp3_items = _document.getElementsByClassName("upload-mp3");
+            const yt_items = _document.getElementsByClassName("upload-yt");
+            for (i of mp3_items) {
+                i.classList.add("display")
+            }
+            for (i of yt_items) {
+                i.classList.remove("display")
+            }
         }
 
-        // Log the clicked element in the console
-        let overlay = _document.getElementById("overlay");
-        overlay.classList.add("active");
+        if (event.target.matches('#upload-yt-link')) {
+            const mp3_items = _document.getElementsByClassName("upload-mp3");
+            const yt_items = _document.getElementsByClassName("upload-yt");
+            for (i of mp3_items) {
+                i.classList.remove("display")
+            }
+            for (i of yt_items) {
+                i.classList.add("display")
+            }
+        }
+
+        // If the clicked element doesn't have the right selector, bail
+        if (event.target.matches('#song-request input') || event.target.matches('#email-request input') || (
+            event.target.matches('#mp3-request')) && _document.getElementById('mp3-input').value.length > 0
+        ) {
+            let overlay = _document.getElementById("overlay");
+            overlay.classList.add("active");
+        }
 
     }, false);
 </script>

@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, redirect, url_for, render_template, flash, jsonify, abort
+from flask import Flask, redirect, url_for, render_template, flash, jsonify, abort, request
 from flask_cors import cross_origin
 import urllib.parse
 import requests
@@ -11,6 +11,7 @@ import pyrebase
 from time import time
 import json
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
 from forms import RequestForm, EmailForm
 
@@ -43,13 +44,13 @@ def home():
     if form.validate_on_submit():
         email = form.email.data
         if checkEmailExist(email):
-            return redirect(url_for('request', email = email))
+            return redirect(url_for('requestSong', email = email))
         abort(404)
     return render_template("index.html", form=form)
 
 
 @app.route('/request:<email>', methods = ['GET', 'POST'])
-def request(email):
+def requestSong(email):
     form = RequestForm()
     if form.validate_on_submit():
         url = form.url.data
@@ -87,6 +88,32 @@ def playlist(email, msg = None):
     if len(data['playlist']) <= 0:
         return render_template("msg.html", msg = "Playlist is empty", email = email)
     return render_template("playlist.html", email = email, msg = msg, data = data)
+
+
+@app.route('/uploader:<email>', methods = ['POST'])
+def upload_file(email):
+    f = request.files['file']
+    directory = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    mp3_path = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR, secure_filename(f.filename))
+    f.save(mp3_path)
+
+    title = secure_filename(f.filename).replace('.mp3', '')
+
+    song_details = uploadMp3(email, title, mp3_path)        
+    try:
+        parsed_name = urllib.parse.quote_plus(song_details.get('name'))
+    except:
+        return redirect(url_for('message', msg = "Unable to get download URL.", email = email))
+    download_url = "https://firebasestorage.googleapis.com/v0/b/{}/o/{}?alt=media&token={}".format(
+        song_details['bucket'],
+        parsed_name,
+        song_details['downloadTokens'])
+    os.remove(mp3_path)
+    song = createFbSong(name = title, url = download_url)
+    updateUserPlaylist(song, email)
+    return redirect(url_for('playlist', email = email, msg = "Thank you for dedicating! Your song has been added to the playlist."))
 
 
 @app.errorhandler(404)
