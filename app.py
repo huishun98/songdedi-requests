@@ -99,9 +99,9 @@ def upload_file(email):
     mp3_path = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR, secure_filename(f.filename))
     f.save(mp3_path)
 
-    title = secure_filename(f.filename).replace('.mp3', '')
+    title = f.filename.replace('.mp3', '')
 
-    song_details = uploadMp3(email, title, mp3_path)        
+    song_details = uploadMp3(email, title, mp3_path)
     try:
         parsed_name = urllib.parse.quote_plus(song_details.get('name'))
     except:
