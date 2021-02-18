@@ -47,10 +47,11 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
 pycryptodome==3.4.3
-Pyrebase==3.0.27
+PyJWT==2.0.1
+Pyrebase
 python-dotenv==0.14.0
 python-jwt==2.0.1
-YouPy @ git+https://github.com/huishun98/YouPy.git
+pytube @ git+https://github.com/huishun98/pytube.git
 pytz==2020.1
 requests==2.24.0
 requests-toolbelt==0.7.0
