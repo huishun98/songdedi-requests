@@ -128,7 +128,7 @@ def convert(url):
     folder = os.path.join(Settings.BASE_DIR, Settings.MUSIC_DIR)
 
     try:
-        YouTube(url, request_headers = {'cookie': Settings.COOKIE}).streams.first().download(folder)
+        YouTube(url, extra_headers = {'cookie': Settings.COOKIE}).streams.filter(progressive=True, file_extension='mp4').first().download(folder)
     except Exception as e:
         print(e)
         return None, None
