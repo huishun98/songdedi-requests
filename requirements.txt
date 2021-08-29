@@ -21,6 +21,7 @@ google-crc32c==1.1.2
 google-resumable-media==2.0.0
 googleapis-common-protos==1.53.0
 grpcio==1.39.0
+gunicorn==20.1.0
 httplib2==0.19.1
 idna==3.2
 imageio==2.9.0
@@ -46,7 +47,7 @@ pyparsing==2.4.7
 Pyrebase==3.0.27
 python-dotenv==0.19.0
 python-jwt==2.0.1
-pytube @ git+https://github.com/pytube/pytube@bb890af3b271a616bbe1d08abc8c65bac9266b0a
+pytube @ git+https://github.com/huishun98/pytube@5278d6639cfa6e81d56674eeed24db4277043bb6
 pytz==2021.1
 requests==2.26.0
 requests-toolbelt==0.7.0
