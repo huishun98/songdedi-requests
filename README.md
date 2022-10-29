@@ -2,10 +2,6 @@
 
 Dedicate songs to the host.
 
-Song request live site: https://songdedi.herokuapp.com/
-
-Song dedication admin panel live site: https://songdedi-admin.herokuapp.com/
-
 ## Setting up
 1. Create env variables
 - apiKey
